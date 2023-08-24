@@ -1,21 +1,19 @@
-const socketIo = require('socket.io-client');
+const socketIo = require("socket.io-client");
 const fs = require("fs");
 
-const socket = socketIo.connect('http://172.18.0.1:3000'); 
+const socket = socketIo.connect("http://192.168.1.145:3000");
 
-socket.on('connect', (log) => {
-  console.log('Socket.IO client connected');
-
-  fs.appendFileSync('received_logs.log', log + '\n');
-
-  socket.emit('messageFromClient', 'Hello, Server! This is the client.');
+socket.on("connect", (log) => {
+  console.log("Socket.IO client connected");
 });
 
-socket.on('newLog', (log) => {
-  console.log('Socket.IO log client connected');
-  console.log('log :>> ', log);
+socket.on("connect_error", (error) => {
+  console.error("Socket.IO connection error:", error);
+});
 
-  fs.appendFileSync('received_logs.log', log + '\n');
+socket.on("newLog", (log) => {
+  console.log("Socket.IO log client connected");
+  console.log("log :>> ", log);
 
-  socket.emit('messageFromClient', 'Hello, Server! This is the client.');
+  fs.appendFileSync("received_logs.log", log + "\n");
 });
