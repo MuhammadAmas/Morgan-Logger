@@ -1,12 +1,21 @@
 const socketIo = require('socket.io-client');
-const fs = require('fs');
+const fs = require("fs");
 
-// Connect to the Socket.IO server running on Machine A
-const socket = socketIo.connect('http://192.168.1.145:3000'); // Replace with Machine A's IP
+const socket = socketIo.connect('http://192.168.1.145:3000'); 
 
-console.log('Hey!!');
-// Listen for 'newLog' event
-socket.on('newLog', (log) => {
-  // Log received data to a local file or process it as needed
+socket.on('connect', (log) => {
+  console.log('Socket.IO client connected');
+
   fs.appendFileSync('received_logs.log', log + '\n');
+
+  socket.emit('messageFromClient', 'Hello, Server! This is the client.');
+});
+
+socket.on('newLog', (log) => {
+  console.log('Socket.IO log client connected');
+  console.log('log :>> ', log);
+
+  fs.appendFileSync('received_logs.log', log + '\n');
+
+  socket.emit('messageFromClient', 'Hello, Server! This is the client.');
 });
