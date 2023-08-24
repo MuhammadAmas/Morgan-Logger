@@ -77,6 +77,14 @@ io.on('connection', (socket) => {
   console.log('Socket.IO client connected');
 });
 
+app.use((req, res, next) => {
+  // Emit the log to connected clients
+  io.emit('newLog', req.originalUrl); // You can customize the data you send
+  next();
+});
+
+app.use("/logs", express.static("public"));
+
 // Start the server
 const PORT = 3000;
 server.listen(PORT, () => {
