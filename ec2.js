@@ -1,7 +1,7 @@
 const socketIo = require('socket.io-client');
 const fs = require("fs");
 
-const socket = socketIo.connect('http://110.93.230.165:3000'); 
+const socket = socketIo.connect('http://192.168.1.145:3000'); 
 
 socket.on('connect', (log) => {
   console.log('Socket.IO client connected');
