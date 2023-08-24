@@ -1,13 +1,19 @@
 const express = require("express");
-const net = require('net');
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 require('dotenv').config();
 
-const PORT = process.env.PORT;
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+const PORT = process.env.PORT;
+
 
 const logFilePath = path.join(__dirname, "public/morgan.log");
 
@@ -25,17 +31,18 @@ app.get("/404", (req, res) => {
 
 app.use("/logs", express.static("public"));
 
+io.on('connection', (socket) => {
+  console.log('Socket.IO client connected');
+});
+
+// Inside the part where you're writing logs using Morgan
+app.use((req, res, next) => {
+  // Emit the log to connected clients
+  io.emit('newLog', req.originalUrl); // You can customize the data you send
+  next();
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-});
-
-// Set up a TCP server to send logs to the receiver laptop
-const client = new net.Socket();
-client.connect(12345, 'RECEIVER_LAPTOP_IP', () => {
-  console.log('Connected to receiver laptop');
-});
-
-// Send logs to the receiver
-logStream.on('data', (data) => {
-  client.write(data);
 });
